@@ -1,9 +1,10 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { canLogHours, expirationDate, mapsLink, remainingHours, rowsToStudents, totalHours } from '../src/lib/helpers.js';
-test('YAP hour ceiling includes existing entries',()=>{
- const rows = [{student_id:'abc',hours:71.5}];
- assert.equal(totalHours(rows,'abc'),71.5);
+import { HOURS_LIMIT, canLogHours, expirationDate, mapsLink, remainingHours, rowsToStudents, totalHours } from '../src/lib/helpers.js';
+test('YAP 720-hour ceiling includes existing entries',()=>{
+ const rows = [{student_id:'abc',hours:719.5}];
+ assert.equal(HOURS_LIMIT,720);
+ assert.equal(totalHours(rows,'abc'),719.5);
  assert.equal(remainingHours(rows,'abc'),.5);
  assert.equal(canLogHours(rows,'abc',.5),true);
  assert.equal(canLogHours(rows,'abc',.6),false);

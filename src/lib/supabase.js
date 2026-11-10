@@ -5,3 +5,5 @@ export const configured = Boolean(url && key && !url.includes('YOUR-PROJECT') &&
 export const supabase = configured ? createClient(url, key, {
   auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true }
 }) : null;
+// Set VITE_TEST_MODE=true (Cloudflare env var or .env.local) to show the "Test version" banner.
+export const testMode = String(import.meta.env.VITE_TEST_MODE ?? '').toLowerCase() === 'true';

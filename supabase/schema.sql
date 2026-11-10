@@ -88,7 +88,7 @@ create index supervisor_lookup on public.supervisor_assignments(supervisor_user_
 create table public.yap_hours (
   id uuid primary key default gen_random_uuid(),
   student_id uuid not null references public.students(id) on delete cascade,
-  hours numeric(5,2) not null check (hours > 0 and hours <= 72),
+  hours numeric(5,2) not null check (hours > 0 and hours <= 720),
   performed_on date not null,
   note text not null default '',
   created_by uuid not null references auth.users(id),
@@ -169,20 +169,20 @@ create policy "teacher or assigned supervisor reads assignments" on public.super
 create policy "teacher and assigned supervisor read hours" on public.yap_hours for select to authenticated
   using (
     exists (select 1 from public.students s where s.id = student_id and s.owner_id = (select auth.uid()))
-    or exists (select 1 from public.supervisor_assignments a where a.student_id = student_id and a.supervisor_user_id = (select auth.uid()))
+    or exists (select 1 from public.supervisor_assignments a where a.student_id = yap_hours.student_id and a.supervisor_user_id = (select auth.uid()))
   );
 create policy "teacher or assigned supervisor adds hours" on public.yap_hours for insert to authenticated
   with check (
     created_by = (select auth.uid())
     and (
       exists (select 1 from public.students s where s.id = student_id and s.owner_id = (select auth.uid()) and s.program = 'YAP' and s.archived_at is null)
-      or exists (select 1 from public.supervisor_assignments a where a.student_id = student_id and a.supervisor_user_id = (select auth.uid()))
+      or exists (select 1 from public.supervisor_assignments a where a.student_id = yap_hours.student_id and a.supervisor_user_id = (select auth.uid()))
     )
   );
 create policy "teacher deletes incorrect hours" on public.yap_hours for delete to authenticated
   using (exists (select 1 from public.students s where s.id = student_id and s.owner_id = (select auth.uid())));
 
--- Database-enforced 72-hour maximum (serializes concurrent additions for same student).
+-- Database-enforced 720-hour maximum (serializes concurrent additions for same student).
 create or replace function public.enforce_yap_limit()
 returns trigger language plpgsql security definer set search_path = '' as $$
 declare existing_total numeric;
@@ -192,8 +192,8 @@ begin
     raise exception 'Only active YAP students can receive hour entries';
   end if;
   select coalesce(sum(hours), 0) into existing_total from public.yap_hours where student_id = new.student_id;
-  if existing_total + new.hours > 72 then
-    raise exception 'YAP hour limit is 72. Current: %, attempted additional: %', existing_total, new.hours;
+  if existing_total + new.hours > 720 then
+    raise exception 'YAP hour limit is 720. Current: %, attempted additional: %', existing_total, new.hours;
   end if;
   return new;
 end; $$;

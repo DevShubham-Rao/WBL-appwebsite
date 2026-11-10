@@ -1,6 +1,6 @@
 export const VISIT_KINDS = ['In person', 'Zoom', 'Phone call', 'Message'];
 export const PROGRAMS = ['WBL', 'YAP'];
-export const HOURS_LIMIT = 72;
+export const HOURS_LIMIT = 720;
 export function totalHours(rows = [], studentId) {
   return Math.round(rows.filter(r => r.student_id === studentId).reduce((a, r) => a + Number(r.hours), 0) * 100) / 100;
 }

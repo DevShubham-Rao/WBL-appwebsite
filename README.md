@@ -2,6 +2,8 @@
 
 **A mobile-friendly web rewrite of the uploaded SwiftUI Timestamp project.** Opens in Safari/Chrome without an IPA or sideloader. Built with React + Vite + Supabase Auth/Postgres, including row-level access control.
 
+> **New here? Follow [SETUP-GUIDE.md](SETUP-GUIDE.md)** — the step-by-step test-version setup.
+
 ## What it does
 
 - Teacher dashboard, student roster, direct `.csv`, `.tsv`, and `.xlsx` spreadsheet import
@@ -12,7 +14,7 @@
 - Mark visits completed, save sessions, manually enter and edit actual mileage
 - Complete ZIP/JSON + CSV exports for dates you choose, including separate visits, mileage, YAP hours, roster, and notes
 - Separate **supervisor account**: can select only YAP students assigned to them and add worked hours. No access to student employer addresses, phone numbers or teacher notes.
-- YAP total enforced at **72 hours** in the database, including when people submit simultaneously
+- YAP total enforced at **720 hours** in the database, including when people submit simultaneously
 - Teacher-only full reset, configurable light blue/white or alternate colors, graduation-based retention checks
 - Add to iPhone Home Screen from Safari (no Apple developer membership or sideloader required)
 
@@ -40,7 +42,7 @@ You need **Node.js 20+** installed.
 
 ```bash
 # In the extracted timestamp-web-source folder:
-copy .env.example .env.local
+copy .env.example .env.local   (Windows)  —  cp .env.example .env.local (Mac)
 npm install
 npm run dev
 ```
@@ -85,7 +87,7 @@ on conflict do nothing;
 2. The teacher goes to **Students → select a YAP student → Approved YAP supervisors**.
 3. The teacher enters the supervisor's exact verified email and selects **Grant access**.
 4. The supervisor signs out/in or refreshes the page and sees only their assigned YAP student names, graduation years, worked hours, and their hour history.
-5. They select the student and log a dated number of hours (e.g. `4.5`). Total hours cannot exceed 72. **The database refuses entries over the limit**, even if two people submit at once.
+5. They select the student and log a dated number of hours (e.g. `4.5`). Total hours cannot exceed 720. **The database refuses entries over the limit**, even if two people submit at once.
 6. Teachers may remove an incorrect entry. Archiving a student revokes supervisor access; restoring the student does not automatically grant that access again.
 
 **Do not share teacher logins or give the supervisor a teacher account.**
@@ -128,6 +130,6 @@ npm run build
 
 Code in `src/`, SQL in `supabase/schema.sql`, tests in `tests/`.
 
-**Current verification status:** The helper tests and a JSX source syntax check passed in the file-authoring environment. Full Vite build, real Supabase SQL deployment, RLS role tests, iOS Safari testing and a formal student-data privacy review have **not** been run here. Deploy with fictional students first, then test (a) teacher can edit only own roster, (b) supervisor cannot read student notes/address and cannot add hours to unassigned student, (c) two concurrent hour logs cannot exceed 72, (d) archived supervisor loses access, and (e) exports and retention operate as intended.
+**Current verification status:** The helper tests and a JSX source syntax check passed in the file-authoring environment. Full Vite build, real Supabase SQL deployment, RLS role tests, iOS Safari testing and a formal student-data privacy review have **not** been run here. Deploy with fictional students first, then test (a) teacher can edit only own roster, (b) supervisor cannot read student notes/address and cannot add hours to unassigned student, (c) two concurrent hour logs cannot exceed 720, (d) archived supervisor loses access, and (e) exports and retention operate as intended.
 
 Current Supabase documentation: [React quickstart](https://supabase.com/docs/guides/getting-started/quickstarts/reactjs) and [RLS](https://supabase.com/docs/guides/database/postgres/row-level-security); Cloudflare's [Vite build configuration](https://developers.cloudflare.com/pages/configuration/build-configuration/).
